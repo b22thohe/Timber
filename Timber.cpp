@@ -10,6 +10,21 @@ int main() {
 	// Create and open a window for the game
 	RenderWindow window(vm, "Timber!!", Style::Fullscreen);
 	
+	// Create texture to hold a graphic
+	Texture textureBackground;
+	
+	// Load graphic into texture
+	textureBackground.loadFromFile("graphics/background.png");
+	
+	// Create a sprite
+	Sprite spriteBackground;
+	
+	// Attach texture to sprite
+	spriteBackground.setTexture(textureBackground);
+	
+	// Set sprite to cover the screen
+	spriteBackground.setPosition(0, 0);
+	
 	while (window.isOpen()) {
 		// Handle Player input
 		
