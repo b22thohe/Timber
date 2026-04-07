@@ -85,12 +85,14 @@ int main() {
 	// Setup paus function
 	bool isPaused = true;
 	bool pausedAtStart = true;
+	bool paused = true;
 
 	// Declare some text properties
 	int score = 0;
 
 	Text messageText;
 	Text scoreText;
+	Text pauseMessageText;
 
 	// Set the font
 	Font font;
@@ -99,18 +101,22 @@ int main() {
 	// Make outputs use the font
 	messageText.setFont(font);
 	scoreText.setFont(font);
+	pauseMessageText.setFont(font);
 
 	// Set output texts
 	messageText.setString("Press <SPACE> to start!");
 	scoreText.setString("Score: 0");
+	pauseMessageText.setString("Game is paused! Press <SPACE> to resume!");
 
 	// Set font size
 	messageText.setCharacterSize(75);
 	scoreText.setCharacterSize(100);
+	pauseMessageText.setCharacterSize(75);
 
 	// Set text color
 	messageText.setFillColor(Color::White);
 	scoreText.setFillColor(Color::White);
+	pauseMessageText.setFillColor(Color::Red);
 
 	// Position the text
 	FloatRect textRect = messageText.getLocalBounds();
@@ -119,7 +125,15 @@ int main() {
 		textRect.top +
 		textRect.height / 2.0f);
 
+	FloatRect pauseTextRect = pauseMessageText.getLocalBounds();
+	pauseMessageText.setOrigin(pauseTextRect.left +
+		pauseTextRect.width / 2.0f,
+		pauseTextRect.top +
+		pauseTextRect.height / 2.0f);
+
 	messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+	pauseMessageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
 
 	scoreText.setPosition(20, 20);
 
@@ -136,6 +150,11 @@ int main() {
 					isPaused = !isPaused;
 
 					pausedAtStart = false;
+
+					if (!pausedAtStart)
+					{
+						paused = !paused;
+					}
 				}
 				if (event.key.code == Keyboard::Escape) {
 					window.close();
@@ -264,6 +283,11 @@ int main() {
 			clock.restart();
 		}
 
+		// Update score
+		std::stringstream ss;
+		ss << "Score: " << score;
+		scoreText.setString(ss.str());
+
 		/* Draw scene */
 
 		// Clear everything from last frame
@@ -281,6 +305,11 @@ int main() {
 		if (pausedAtStart)
 		{
 			window.draw(messageText);
+		}
+
+		if (paused && !pausedAtStart)
+		{
+			window.draw(pauseMessageText);
 		}
 
 		// Show everything we just drew
