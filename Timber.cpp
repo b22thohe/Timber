@@ -1,3 +1,4 @@
+#include <sstream>
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
@@ -83,6 +84,44 @@ int main() {
 
 	// Setup paus function
 	bool isPaused = true;
+	bool pausedAtStart = true;
+
+	// Declare some text properties
+	int score = 0;
+
+	Text messageText;
+	Text scoreText;
+
+	// Set the font
+	Font font;
+	font.loadFromFile("fonts/KOMIKAP_.ttf");
+
+	// Make outputs use the font
+	messageText.setFont(font);
+	scoreText.setFont(font);
+
+	// Set output texts
+	messageText.setString("Press <SPACE> to start!");
+	scoreText.setString("Score: 0");
+
+	// Set font size
+	messageText.setCharacterSize(75);
+	scoreText.setCharacterSize(100);
+
+	// Set text color
+	messageText.setFillColor(Color::White);
+	scoreText.setFillColor(Color::White);
+
+	// Position the text
+	FloatRect textRect = messageText.getLocalBounds();
+	messageText.setOrigin(textRect.left +
+		textRect.width / 2.0f,
+		textRect.top +
+		textRect.height / 2.0f);
+
+	messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+	scoreText.setPosition(20, 20);
 
 	while (window.isOpen()) {
 		/* 1. Handle Events (Better for Toggles) */
@@ -95,6 +134,8 @@ int main() {
 			if (event.type == Event::KeyPressed) {
 				if (event.key.code == Keyboard::Space) {
 					isPaused = !isPaused;
+
+					pausedAtStart = false;
 				}
 				if (event.key.code == Keyboard::Escape) {
 					window.close();
@@ -235,6 +276,12 @@ int main() {
 		window.draw(spriteCloud3);
 		window.draw(spriteTree);
 		window.draw(spriteBee);
+		window.draw(scoreText);
+
+		if (pausedAtStart)
+		{
+			window.draw(messageText);
+		}
 
 		// Show everything we just drew
 		window.display();
