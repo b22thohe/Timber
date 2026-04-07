@@ -93,7 +93,7 @@ int main() {
 		// Measure time
 		Time dt = clock.restart();
 
-		// Setup the bee
+		// Manage the bee
 		if (!beeActive)
 		{
 			// The speed of the bee
@@ -120,9 +120,90 @@ int main() {
 				beeActive = false;
 			}
 		}
+
+		// Manage the clouds
+		// Cloud 1
+		if (!cloud1Active)
+		{
+			// Speed of the cloud
+			srand((int)time(0) * 10);
+			cloud1Speed = (rand() % 200);
+
+			// Altitude of the cloud
+			srand((int)time(0) * 10);
+			float height = (rand() % 150);
+			spriteCloud1.setPosition(-200, height);
+			cloud1Active = true;
+		} else
+		{
+			spriteCloud1.setPosition(
+				spriteCloud1.getPosition().x +
+				(cloud1Speed * dt.asSeconds()),
+				spriteCloud1.getPosition().y);
+
+			// Check if cloud has reached right side of screen
+			if (spriteCloud1.getPosition().x > 1920)
+			{
+				// Set it up to be a new cloud next frame
+				cloud1Active = false;
+			}
+		}
+
+		// Cloud 2
+		if (!cloud2Active)
+		{
+			// Speed of the cloud
+			srand((int)time(0) * 20);
+			cloud2Speed = (rand() % 200);
+
+			// Altitude of the cloud
+			srand((int)time(0) * 20);
+			float height = (rand() % 150);
+			spriteCloud2.setPosition(-200, height);
+			cloud2Active = true;
+		} else
+		{
+			spriteCloud2.setPosition(
+				spriteCloud2.getPosition().x +
+				(cloud2Speed * dt.asSeconds()),
+				spriteCloud2.getPosition().y);
+
+			// Check if cloud has reached right side of screen
+			if (spriteCloud2.getPosition().x > 1920)
+			{
+				// Set it up to be a new cloud next frame
+				cloud2Active = false;
+			}
+		}
+
+		// Cloud 3
+		if (!cloud3Active)
+		{
+			// Speed of the cloud
+			srand((int)time(0) * 30);
+			cloud3Speed = (rand() % 200);
+
+			// Altitude of the cloud
+			srand((int)time(0) * 30);
+			float height = (rand() % 150);
+			spriteCloud3.setPosition(-200, height);
+			cloud3Active = true;
+		} else
+		{
+			spriteCloud3.setPosition(
+				spriteCloud3.getPosition().x +
+				(cloud3Speed * dt.asSeconds()),
+				spriteCloud3.getPosition().y);
+
+			// Check if cloud has reached right side of screen
+			if (spriteCloud3.getPosition().x > 1920)
+			{
+				// Set it up to be a new cloud next frame
+				cloud3Active = false;
+			}
+		}
 		
-		
-		// Draw scene
+		/* Draw scene */
 		
 		// Clear everything from last frame
 		window.clear();
