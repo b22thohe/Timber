@@ -88,7 +88,38 @@ int main() {
 			window.close();
 		}
 		
-		// Update scene
+		/* Update scene */
+
+		// Measure time
+		Time dt = clock.restart();
+
+		// Setup the bee
+		if (!beeActive)
+		{
+			// The speed of the bee
+			srand((int)time(0));
+			beeSpeed = (rand() % 200) + 200;
+
+			// The altitude of the bee
+			srand((int)time(0) * 10);
+			float height = (rand() % 500) + 500;
+			spriteBee.setPosition(2000, height);
+			beeActive = true;
+		} else
+		{
+			// Move the bee
+			spriteBee.setPosition(
+				spriteBee.getPosition().x -
+				(beeSpeed * dt.asSeconds()),
+				spriteBee.getPosition().y);
+
+			// Check if bee has reached left side of screen
+			if (spriteBee.getPosition().x < -100)
+			{
+				// Set it up to be a new bee next frame
+				beeActive = false;
+			}
+		}
 		
 		
 		// Draw scene
