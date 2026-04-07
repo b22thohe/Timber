@@ -82,7 +82,7 @@ int main() {
 	Clock clock;
 
 	// Setup paus function
-	bool isPaused = false;
+	bool isPaused = true;
 
 	while (window.isOpen()) {
 		/* 1. Handle Events (Better for Toggles) */
@@ -218,27 +218,26 @@ int main() {
 					cloud3Active = false;
 				}
 			}
-
-			/* Draw scene */
-
-			// Clear everything from last frame
-			window.clear();
-
-			// Draw game scene
-			window.draw(spriteBackground);
-			window.draw(spriteCloud1);
-			window.draw(spriteCloud2);
-			window.draw(spriteCloud3);
-			window.draw(spriteTree);
-			window.draw(spriteBee);
-
-			// Show everything we just drew
-			window.display();
 		} else
 		{
 			clock.restart();
 		}
 
+		/* Draw scene */
+
+		// Clear everything from last frame
+		window.clear();
+
+		// Draw game scene
+		window.draw(spriteBackground);
+		window.draw(spriteCloud1);
+		window.draw(spriteCloud2);
+		window.draw(spriteCloud3);
+		window.draw(spriteTree);
+		window.draw(spriteBee);
+
+		// Show everything we just drew
+		window.display();
 	}
 	
 	return 0;
