@@ -344,7 +344,7 @@ int main() {
 		window.draw(scoreText);
 		window.draw(timerBar);
 
-		if (pausedAtStart)
+		if (pausedAtStart || timerRemaining <= 0.0f)
 		{
 			window.draw(messageText);
 		}
