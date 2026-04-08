@@ -82,7 +82,19 @@ int main() {
 	// Time control variables
 	Clock clock;
 
-	// Setup paus function
+	// Timer bar
+	RectangleShape timerBar;
+	float timerBarStartWidth = 400;
+	float timerBarHeight = 80;
+	timerBar.setSize(Vector2f(timerBarStartWidth, timerBarHeight));
+	timerBar.setFillColor(Color::Red);
+	timerBar.setPosition((1920 / 2) - timerBarStartWidth / 2, 980);
+
+	Time gameTimeTotal;
+	float timerRemaining = 6.0f;
+	float timerBarWidthPerSecond = timerBarStartWidth / timerRemaining;
+
+	// Setup paus functions
 	bool isPaused = true;
 	bool pausedAtStart = true;
 	bool paused = true;
@@ -159,6 +171,12 @@ int main() {
 				if (event.key.code == Keyboard::Escape) {
 					window.close();
 				}
+				if (event.key.code == Keyboard::Enter)
+				{
+					// New game so refresh timer & score
+					score = 0;
+					timerRemaining = 6;
+				}
 			}
 		}
 
@@ -168,6 +186,29 @@ int main() {
 
 			// Measure time
 			Time dt = clock.restart();
+
+			// Subtract from time remaining
+			timerRemaining -= dt.asSeconds();
+			// Set size of timer bar
+			timerBar.setSize(Vector2f(timerBarWidthPerSecond *
+				timerRemaining, timerBarHeight));
+
+			if (timerRemaining <= 0.0f)
+			{
+				// Pause the game
+				isPaused = true;
+				// Message to the player
+				messageText.setString("Time has run out!");
+
+				// Reposition text based on its new size
+				FloatRect textRect = messageText.getLocalBounds();
+				messageText.setOrigin(textRect.left +
+					textRect.width / 2.0f,
+					textRect.top +
+					textRect.height / 2.0f);
+
+				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+			}
 
 			// Manage the bee
 			if (!beeActive)
@@ -301,6 +342,7 @@ int main() {
 		window.draw(spriteTree);
 		window.draw(spriteBee);
 		window.draw(scoreText);
+		window.draw(timerBar);
 
 		if (pausedAtStart)
 		{
