@@ -13,28 +13,11 @@ const float CLOUD3_V_POS = 500;
 
 enum class State { PAUSED, PLAYING, GAME_OVER, START_SCREEN };
 
-void centerText(Text& text, Vector2f position) {
-	FloatRect textRect = text.getLocalBounds();
-	text.setOrigin(textRect.left + textRect.width / 2.0f,
-				   textRect.top + textRect.height / 2.0f);
-	text.setPosition(position);
-}
+/* PROTOTYPES */
+void centerText(Text& text, Vector2f position);
 
-// Function for handling clouds
-void updateCloud(Sprite& cloud, float& speed, bool& active, float dt, int screenWidth)
-{
-	if (!active) {
-		speed = (rand() % 200);
-		float height = (rand() % 150);
-		cloud.setPosition(-200, height);
-		active = true;
-	} else {
-		cloud.setPosition(cloud.getPosition().x + (speed * dt), cloud.getPosition().y);
-		if (cloud.getPosition().x > screenWidth) {
-			active = false;
-		}
-	}
-}
+void updateCloud(Sprite& cloud, float& speed, bool& active, float dt, int screenWidth);
+
 
 // This is where the game starts from int main()
 int main() {
@@ -330,4 +313,29 @@ int main() {
 	}
 	
 	return 0;
+}
+
+/* Helper functions */
+
+void centerText(Text& text, Vector2f position) {
+	FloatRect textRect = text.getLocalBounds();
+	text.setOrigin(textRect.left + textRect.width / 2.0f,
+				   textRect.top + textRect.height / 2.0f);
+	text.setPosition(position);
+}
+
+// Function for handling clouds
+void updateCloud(Sprite& cloud, float& speed, bool& active, float dt, int screenWidth)
+{
+	if (!active) {
+		speed = (rand() % 200);
+		float height = (rand() % 150);
+		cloud.setPosition(-200, height);
+		active = true;
+	} else {
+		cloud.setPosition(cloud.getPosition().x + (speed * dt), cloud.getPosition().y);
+		if (cloud.getPosition().x > screenWidth) {
+			active = false;
+		}
+	}
 }
