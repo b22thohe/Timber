@@ -13,6 +13,22 @@ const float CLOUD3_V_POS = 500;
 
 enum class State { PAUSED, PLAYING, GAME_OVER, START_SCREEN };
 
+// Function for handling cloud creation and placement
+void updateCloud(Sprite& cloud, float& speed, bool& active, float dt, int screenWidth)
+{
+	if (!active) {
+		speed = (rand() % 200);
+		float height = (rand() % 150);
+		cloud.setPosition(-200, height);
+		active = true;
+	} else {
+		cloud.setPosition(cloud.getPosition().x + (speed * dt), cloud.getPosition().y);
+		if (cloud.getPosition().x > screenWidth) {
+			active = false;
+		}
+	}
+}
+
 // This is where the game starts from int main()
 int main() {
 	// Create a video mode object
@@ -185,10 +201,20 @@ int main() {
 				}
 				if (event.key.code == Keyboard::Enter)
 				{
+					// 1. Back to the start
 					gameState = State::START_SCREEN;
-					// New game so refresh timer, score & scene objects
+
+					// 2. Reset the text and re-center it
+					messageText.setString("Press <SPACE> to start!");
+
+					FloatRect textRect = messageText.getLocalBounds();
+					messageText.setOrigin(textRect.left + textRect.width / 2.0f,
+										  textRect.top + textRect.height / 2.0f);
+					messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+					// 3. Reset game variables
 					score = 0;
-					timerRemaining = 6;
+					timerRemaining = 6.0f;
 					beeActive = false;
 					cloud1Active = false;
 					cloud2Active = false;
@@ -256,86 +282,9 @@ int main() {
 			}
 
 			// Manage the clouds
-			// Cloud 1
-			if (!cloud1Active)
-			{
-				// Speed of the cloud
-				srand((int)time(0) * 10);
-				cloud1Speed = (rand() % 200);
-
-				// Altitude of the cloud
-				srand((int)time(0) * 10);
-				float height = (rand() % 150);
-				spriteCloud1.setPosition(-200, height);
-				cloud1Active = true;
-			} else
-			{
-				spriteCloud1.setPosition(
-					spriteCloud1.getPosition().x +
-					(cloud1Speed * dt.asSeconds()),
-					spriteCloud1.getPosition().y);
-
-				// Check if cloud has reached right side of screen
-				if (spriteCloud1.getPosition().x > 1920)
-				{
-					// Set it up to be a new cloud next frame
-					cloud1Active = false;
-				}
-			}
-
-			// Cloud 2
-			if (!cloud2Active)
-			{
-				// Speed of the cloud
-				srand((int)time(0) * 20);
-				cloud2Speed = (rand() % 200);
-
-				// Altitude of the cloud
-				srand((int)time(0) * 20);
-				float height = (rand() % 150);
-				spriteCloud2.setPosition(-200, height);
-				cloud2Active = true;
-			} else
-			{
-				spriteCloud2.setPosition(
-					spriteCloud2.getPosition().x +
-					(cloud2Speed * dt.asSeconds()),
-					spriteCloud2.getPosition().y);
-
-				// Check if cloud has reached right side of screen
-				if (spriteCloud2.getPosition().x > 1920)
-				{
-					// Set it up to be a new cloud next frame
-					cloud2Active = false;
-				}
-			}
-
-			// Cloud 3
-			if (!cloud3Active)
-			{
-				// Speed of the cloud
-				srand((int)time(0) * 30);
-				cloud3Speed = (rand() % 200);
-
-				// Altitude of the cloud
-				srand((int)time(0) * 30);
-				float height = (rand() % 150);
-				spriteCloud3.setPosition(-200, height);
-				cloud3Active = true;
-			} else
-			{
-				spriteCloud3.setPosition(
-					spriteCloud3.getPosition().x +
-					(cloud3Speed * dt.asSeconds()),
-					spriteCloud3.getPosition().y);
-
-				// Check if cloud has reached right side of screen
-				if (spriteCloud3.getPosition().x > 1920)
-				{
-					// Set it up to be a new cloud next frame
-					cloud3Active = false;
-				}
-			}
+			updateCloud(spriteCloud1, cloud1Speed, cloud1Active, dt.asSeconds(), 1920);
+			updateCloud(spriteCloud2, cloud2Speed, cloud2Active, dt.asSeconds(), 1920);
+			updateCloud(spriteCloud3, cloud3Speed, cloud3Active, dt.asSeconds(), 1920);
 		}
 		else
 		{
