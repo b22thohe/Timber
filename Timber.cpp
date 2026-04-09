@@ -11,6 +11,8 @@ const float CLOUD1_V_POS = 0;
 const float CLOUD2_V_POS = 250;
 const float CLOUD3_V_POS = 500;
 
+enum class State { PAUSED, PLAYING, GAME_OVER, START_SCREEN };
+
 // This is where the game starts from int main()
 int main() {
 	// Create a video mode object
@@ -94,11 +96,6 @@ int main() {
 	float timerRemaining = 6.0f;
 	float timerBarWidthPerSecond = timerBarStartWidth / timerRemaining;
 
-	// Setup paus functions
-	bool isPaused = true;
-	bool pausedAtStart = true;
-	bool paused = true;
-
 	// Declare some text properties
 	int score = 0;
 
@@ -149,6 +146,8 @@ int main() {
 
 	scoreText.setPosition(20, 20);
 
+	State gameState = State::START_SCREEN;
+
 	while (window.isOpen()) {
 		/* 1. Handle Events (Better for Toggles) */
 		Event event;
@@ -159,13 +158,26 @@ int main() {
 			// Check for a single key press
 			if (event.type == Event::KeyPressed) {
 				if (event.key.code == Keyboard::Space) {
-					isPaused = !isPaused;
-
-					pausedAtStart = false;
-
-					if (!pausedAtStart)
+					switch (gameState)
 					{
-						paused = !paused;
+						case State::START_SCREEN:
+							// Move from start state to begin the game
+							gameState = State::PLAYING;
+							break;
+
+						case State::PLAYING:
+							// Move from playing to pause
+							gameState = State::PAUSED;
+							break;
+
+						case State::PAUSED:
+							// Move from paused to playing
+							gameState = State::PLAYING;
+							break;
+
+						case State::GAME_OVER:
+							// Do nothing, as ENTER restarts the game
+							break;
 					}
 				}
 				if (event.key.code == Keyboard::Escape) {
@@ -173,18 +185,23 @@ int main() {
 				}
 				if (event.key.code == Keyboard::Enter)
 				{
-					// New game so refresh timer & score
+					gameState = State::START_SCREEN;
+					// New game so refresh timer, score & scene objects
 					score = 0;
 					timerRemaining = 6;
+					beeActive = false;
+					cloud1Active = false;
+					cloud2Active = false;
+					cloud3Active = false;
 				}
 			}
 		}
 
-		if (!isPaused)
-		{
-			/* Update scene */
+		/* Update scene */
 
-			// Measure time
+		if (gameState == State::PLAYING)
+		{
+				// Measure time
 			Time dt = clock.restart();
 
 			// Subtract from time remaining
@@ -196,7 +213,7 @@ int main() {
 			if (timerRemaining <= 0.0f)
 			{
 				// Pause the game
-				isPaused = true;
+				gameState = State::GAME_OVER;
 				// Message to the player
 				messageText.setString("Time has run out!");
 
@@ -319,7 +336,8 @@ int main() {
 					cloud3Active = false;
 				}
 			}
-		} else
+		}
+		else
 		{
 			clock.restart();
 		}
@@ -344,12 +362,12 @@ int main() {
 		window.draw(scoreText);
 		window.draw(timerBar);
 
-		if (pausedAtStart || timerRemaining <= 0.0f)
+		if (gameState == State::GAME_OVER || gameState == State::START_SCREEN)
 		{
 			window.draw(messageText);
 		}
 
-		if (paused && !pausedAtStart)
+		if (gameState == State::PAUSED)
 		{
 			window.draw(pauseMessageText);
 		}
