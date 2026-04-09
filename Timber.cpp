@@ -254,7 +254,7 @@ int main() {
 				// Pause the game
 				gameState = State::GAME_OVER;
 				// Message to the player
-				messageText.setString("Press <SPACE> to start!");
+				messageText.setString("Time is up!");
 				centerText(messageText, Vector2f(1920 / 2.0f, 1080 / 2.0f));
 			}
 
