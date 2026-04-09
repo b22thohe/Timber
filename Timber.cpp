@@ -13,7 +13,14 @@ const float CLOUD3_V_POS = 500;
 
 enum class State { PAUSED, PLAYING, GAME_OVER, START_SCREEN };
 
-// Function for handling cloud creation and placement
+void centerText(Text& text, Vector2f position) {
+	FloatRect textRect = text.getLocalBounds();
+	text.setOrigin(textRect.left + textRect.width / 2.0f,
+				   textRect.top + textRect.height / 2.0f);
+	text.setPosition(position);
+}
+
+// Function for handling clouds
 void updateCloud(Sprite& cloud, float& speed, bool& active, float dt, int screenWidth)
 {
 	if (!active) {
@@ -31,6 +38,8 @@ void updateCloud(Sprite& cloud, float& speed, bool& active, float dt, int screen
 
 // This is where the game starts from int main()
 int main() {
+	srand((int)time(0));
+
 	// Create a video mode object
 	VideoMode vm(1920, 1080);
 	
@@ -192,7 +201,18 @@ int main() {
 							break;
 
 						case State::GAME_OVER:
-							// Do nothing, as ENTER restarts the game
+							// 1. Reset game variables
+							score = 0;
+							timerRemaining = 6.0f;
+
+							// 2. Reset scene objects so they spawn fresh
+							beeActive = false;
+							cloud1Active = false;
+							cloud2Active = false;
+							cloud3Active = false;
+
+							// 3. Change state to start playing again immediately
+							gameState = State::PLAYING;
 							break;
 					}
 				}
@@ -201,16 +221,9 @@ int main() {
 				}
 				if (event.key.code == Keyboard::Enter)
 				{
-					// 1. Back to the start
 					gameState = State::START_SCREEN;
-
-					// 2. Reset the text and re-center it
 					messageText.setString("Press <SPACE> to start!");
-
-					FloatRect textRect = messageText.getLocalBounds();
-					messageText.setOrigin(textRect.left + textRect.width / 2.0f,
-										  textRect.top + textRect.height / 2.0f);
-					messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+					centerText(messageText, Vector2f(1920 / 2.0f, 1080 / 2.0f));
 
 					// 3. Reset game variables
 					score = 0;
@@ -241,23 +254,14 @@ int main() {
 				// Pause the game
 				gameState = State::GAME_OVER;
 				// Message to the player
-				messageText.setString("Time has run out!");
-
-				// Reposition text based on its new size
-				FloatRect textRect = messageText.getLocalBounds();
-				messageText.setOrigin(textRect.left +
-					textRect.width / 2.0f,
-					textRect.top +
-					textRect.height / 2.0f);
-
-				messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+				messageText.setString("Press <SPACE> to start!");
+				centerText(messageText, Vector2f(1920 / 2.0f, 1080 / 2.0f));
 			}
 
 			// Manage the bee
 			if (!beeActive)
 			{
 				// The speed of the bee
-				srand((int)time(0));
 				beeSpeed = (rand() % 200) + 200;
 
 				// The altitude of the bee
