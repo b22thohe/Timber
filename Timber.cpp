@@ -354,6 +354,26 @@ int main() {
 			updateCloud(spriteCloud2, cloud2Speed, cloud2Active, dt.asSeconds(), 1920);
 			updateCloud(spriteCloud3, cloud3Speed, cloud3Active, dt.asSeconds(), 1920);
 
+			// Check if branch has hit player
+			if (branchPositions[5] == playerSide)
+			{
+				// Ya, he's dead man
+				gameState = State::PAUSED;
+				acceptInput = false;
+
+				// Draw gravestone
+				spriteRIP.setPosition(525, 760);
+
+				// Hide player
+				spritePlayer.setPosition(2000, 660);
+
+				// Change message text
+				messageText.setString("Uh-Oh! You were knocked out!");
+
+				// Center on screen
+				centerText(messageText, Vector2f(1920 / 2.0f, 1080 / 2.0f));
+			}
+
 			// Update branches
 			for (int i = 0; i < NUM_BRANCHES; i++)
 			{
