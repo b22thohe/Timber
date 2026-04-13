@@ -424,6 +424,9 @@ int main() {
 
 				// Center on screen
 				centerText(messageText, Vector2f(1920 / 2.0f, 1080 / 2.0f));
+
+				// Play death sound
+				death.play();
 			}
 
 			// Update branches
