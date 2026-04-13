@@ -1,13 +1,12 @@
 #include <sstream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "Cloud.hpp"
 
 using namespace sf;
 
 /* PROTOTYPES */
 void centerText(Text& text, Vector2f position);
-
-void updateCloud(Sprite& cloud, float& speed, bool& active, float dt, int screenWidth);
 
 void updateBranches(int seed);
 
@@ -15,9 +14,6 @@ const float TREE_H_POS = 810;
 const float TREE_V_POS = 0;
 const float BEE_H_POS = 0;
 const float BEE_V_POS = 800;
-const float CLOUD1_V_POS = 0;
-const float CLOUD2_V_POS = 250;
-const float CLOUD3_V_POS = 500;
 const int NUM_BRANCHES = 6;
 
 enum class State { PAUSED, PLAYING, GAME_OVER, START_SCREEN };
@@ -74,27 +70,13 @@ int main() {
 	// Make some clouds
 	Texture textureCloud;
 	textureCloud.loadFromFile("graphics/cloud.png");
-	Sprite spriteCloud1;
-	Sprite spriteCloud2;
-	Sprite spriteCloud3;
-	spriteCloud1.setTexture(textureCloud);
-	spriteCloud2.setTexture(textureCloud);
-	spriteCloud3.setTexture(textureCloud);
 
-	// Position clouds left on screen at different heights
-	spriteCloud1.setPosition(0, CLOUD1_V_POS);
-	spriteCloud2.setPosition(0, CLOUD2_V_POS);
-	spriteCloud3.setPosition(0, CLOUD3_V_POS);
-
-	// Set cloud activity
-	bool cloud1Active = false;
-	bool cloud2Active = false;
-	bool cloud3Active = false;
-
-	// Set cloud movement speed
-	float cloud1Speed = 0.0f;
-	float cloud2Speed = 0.0f;
-	float cloud3Speed = 0.0f;
+	std::vector<Cloud> clouds;
+	for (int i = 0; i < 3; i++)
+	{
+		// Pass in i+1 to vary the speed/height
+		clouds.emplace_back(textureCloud, i + 1);
+	}
 
 	// Time control variables
 	Clock clock;
@@ -305,9 +287,9 @@ int main() {
 		            score = 0;
 		            timerRemaining = 6.0f;
 		            beeActive = false;
-		            cloud1Active = false;
-		            cloud2Active = false;
-		            cloud3Active = false;
+		        	for (auto& cloud : clouds) {
+		        		cloud.reset();
+		        	}
 		            for (int i = 0; i < NUM_BRANCHES; i++) branchPositions[i] = Side::NONE;
 
 		        	playerSide = Side::LEFT;
@@ -402,9 +384,9 @@ int main() {
 			}
 
 			// Manage the clouds
-			updateCloud(spriteCloud1, cloud1Speed, cloud1Active, dt.asSeconds(), 1920);
-			updateCloud(spriteCloud2, cloud2Speed, cloud2Active, dt.asSeconds(), 1920);
-			updateCloud(spriteCloud3, cloud3Speed, cloud3Active, dt.asSeconds(), 1920);
+			for (auto& cloud : clouds) {
+				cloud.update(dt.asSeconds(), 1920);
+			}
 
 			// Check if branch has hit player
 			if (branchPositions[5] == playerSide)
@@ -492,13 +474,16 @@ int main() {
 
 		// Draw game scene
 		window.draw(spriteBackground);
-		window.draw(spriteCloud1);
-		window.draw(spriteCloud2);
-		window.draw(spriteCloud3);
+		for (auto& cloud : clouds)
+		{
+			window.draw(cloud.getSprite());
+		}
+
 		for (int i = 0; i < NUM_BRANCHES; i++)
 		{
 			window.draw(branches[i]);
 		}
+
 		window.draw(spriteTree);
 
 		// Draw the player
@@ -541,22 +526,6 @@ void centerText(Text& text, Vector2f position) {
 	text.setOrigin(textRect.left + textRect.width / 2.0f,
 				   textRect.top + textRect.height / 2.0f);
 	text.setPosition(position);
-}
-
-// Function for handling clouds
-void updateCloud(Sprite& cloud, float& speed, bool& active, float dt, int screenWidth)
-{
-	if (!active) {
-		speed = (rand() % 200);
-		float height = (rand() % 150);
-		cloud.setPosition(-200, height);
-		active = true;
-	} else {
-		cloud.setPosition(cloud.getPosition().x + (speed * dt), cloud.getPosition().y);
-		if (cloud.getPosition().x > screenWidth) {
-			active = false;
-		}
-	}
 }
 
 // Function for moving branches

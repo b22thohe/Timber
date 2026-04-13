@@ -5,7 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(SFML 2 COMPONENTS audio graphics window system REQUIRED)
 
-add_executable(Timber Timber.cpp)
+add_executable(Timber Timber.cpp
+        Cloud.hpp
+        Cloud.cpp)
 
 target_link_libraries(Timber sfml-audio sfml-graphics sfml-window sfml-system)
 
