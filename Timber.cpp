@@ -173,6 +173,8 @@ int main() {
 
 		// Set sprite's origin to center
 		branches[i].setOrigin(220, 20);
+		// Make sure tree starts empty to ensure no immediate death
+		branchPositions[i] = Side::NONE;
 	}
 
 	// Prepare the player
@@ -228,9 +230,11 @@ int main() {
 
 		    // Reset acceptInput when the user lets go of a key
 		    if (event.type == Event::KeyReleased && gameState == State::PLAYING) {
-		        acceptInput = true;
-		        // Hide the axe when they let go
-		        spriteAxe.setPosition(2000, spriteAxe.getPosition().y);
+		    	if (event.key.code == Keyboard::Left || event.key.code == Keyboard::Right) {
+		    		acceptInput = true;
+		    		// Hide the axe when they let go of the direction
+		    		spriteAxe.setPosition(2000, spriteAxe.getPosition().y);
+		    	}
 		    }
 
 		    if (event.type == Event::KeyPressed) {
@@ -239,16 +243,38 @@ int main() {
 
 		        // Handle SPACE
 		        if (event.key.code == Keyboard::Space) {
-		            if (gameState == State::START_SCREEN) gameState = State::PLAYING;
+		            if (gameState == State::START_SCREEN)
+		            {
+		            	gameState = State::PLAYING;
+		            	score = 0;
+		            	timerRemaining = 6.0f;
+
+		            	// 1. Clear the tree completely first
+		            	for (int i = 0; i < NUM_BRANCHES; i++) {
+		            		branchPositions[i] = Side::NONE;
+		            	}
+
+		            	// 2. (Optional) Fill the tree so it looks like a real tree
+		            	// We call updateBranches but skip the first few
+		            	// so the player has room to breathe
+		            	for (int i = 0; i < NUM_BRANCHES; i++) {
+		            		updateBranches(i);
+		            	}
+
+		            	// 3. THE CRITICAL FIX: Manually clear the bottom branch
+		            	// ONLY once right here at the start.
+		            	branchPositions[5] = Side::NONE;
+		            	branchPositions[4] = Side::NONE; // Optional: gives even more "safety"
+
+		            	// 4. Reset sprites
+		            	spriteRIP.setPosition(0, 2000);
+		            	spriteAxe.setPosition(2000, 830);
+		            	playerSide = Side::LEFT;
+		            	spritePlayer.setPosition(580, 720);
+		            	acceptInput = true;
+		            }
 		            else if (gameState == State::PLAYING) gameState = State::PAUSED;
 		            else if (gameState == State::PAUSED)  gameState = State::PLAYING;
-		            // Note: Game Over is handled by Enter or Space depending on preference
-		            else if (gameState == State::GAME_OVER) {
-		                // Quick reset for Space
-		                score = 0;
-		                timerRemaining = 6.0f;
-		                gameState = State::PLAYING;
-		            }
 		        }
 
 		        // Handle ENTER (Hard Reset)
@@ -358,7 +384,7 @@ int main() {
 			if (branchPositions[5] == playerSide)
 			{
 				// Ya, he's dead man
-				gameState = State::PAUSED;
+				gameState = State::GAME_OVER;
 				acceptInput = false;
 
 				// Draw gravestone
@@ -515,7 +541,6 @@ void updateBranches(int seed)
 
 	// Spawn a new branch at pos 0
 	// LEFT, RIGHT, or NONE
-	srand((int)time(0)+seed);
 	int r = (rand() % 5);
 
 	switch (r)
