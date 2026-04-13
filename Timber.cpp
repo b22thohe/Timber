@@ -289,8 +289,11 @@ int main() {
 		            cloud2Active = false;
 		            cloud3Active = false;
 		            for (int i = 0; i < NUM_BRANCHES; i++) branchPositions[i] = Side::NONE;
+
+		        	playerSide = Side::LEFT;
+		        	spritePlayer.setPosition(580, 720);
+
 		            spriteRIP.setPosition(675, 2000);
-		            spritePlayer.setPosition(580, 720);
 		            acceptInput = true;
 		        }
 
