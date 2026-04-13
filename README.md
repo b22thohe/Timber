@@ -1,7 +1,8 @@
 # Simple implementation of the classic Timberman game
 
 This is a simple implementation of the classic Timberman game, originally made from the version in the book
-Beginning C++ Game Programming (third edition) by John Horton, published by Packt.
+Beginning C++ Game Programming (third edition) by John Horton, published by Packt. It was done to brush up
+on C++ which (judging by the code in this project) was not a day too early.
 
 ## Who's it for
 Might work as inspiration and study for individuals who want to get started with game programming using the 
