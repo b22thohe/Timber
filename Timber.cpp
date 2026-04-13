@@ -221,6 +221,22 @@ int main() {
 	// Player input control
 	bool acceptInput = false;
 
+	// Prepare sound
+	SoundBuffer chopBuffer;
+	chopBuffer.loadFromFile("sound/chop.wav");
+	Sound chop;
+	chop.setBuffer(chopBuffer);
+	SoundBuffer deathBuffer;
+	deathBuffer.loadFromFile("sound/death.wav");
+	Sound death;
+	death.setBuffer(deathBuffer);
+
+	// Out of time
+	SoundBuffer ootBuffer;
+	ootBuffer.loadFromFile("sound/out_of_time.wav");
+	Sound outOfTime;
+	outOfTime.setBuffer(ootBuffer);
+
 	while (window.isOpen()) {
 
 		/* 1. Handle Events */
@@ -235,6 +251,9 @@ int main() {
 		    		acceptInput = true;
 		    		// Hide the axe when they let go of the direction
 		    		spriteAxe.setPosition(2000, spriteAxe.getPosition().y);
+
+		    		// Play a chop sound
+		    		chop.play();
 		    	}
 		    }
 
